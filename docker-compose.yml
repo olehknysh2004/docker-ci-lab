@@ -1,0 +1,29 @@
+
+services:
+  # Перший сервіс - База Даних
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: counter_db
+    # Ось тут ми кажемо, ЩО приєднувати
+    volumes:
+      - db_data:/var/lib/postgresql/data 
+
+  # Другий сервіс - Твій Python додаток
+  web:
+    build: .
+    ports:
+      - "8080:5000"
+    environment:
+      DB_HOST: db
+      DB_NAME: counter_db
+      DB_USER: user
+      DB_PASS: password
+    depends_on:
+      - db
+
+# А ось тут (в самому кінці) ми ОГОЛОШУЄМО це сховище
+volumes:
+  db_data:
